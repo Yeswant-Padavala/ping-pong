@@ -20,7 +20,6 @@ class Ball:
 
         if self.y <= 0 or self.y + self.height >= self.screen_height:
             self.velocity_y *= -1
-            pygame.mixer.Sound.play(self.wall_sound)
 
     def check_collision(self, player, ai, paddle_sound):
         ball_rect = self.rect()
