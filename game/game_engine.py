@@ -38,7 +38,7 @@ class GameEngine:
             self.player.move(10, self.height)
 
     def update(self):
-        self.ball.move()
+        self.ball.move(self.wall_sound)
         self.ball.check_collision(self.player, self.ai, self.paddle_sound)
 
         if self.ball.x <= 0:
