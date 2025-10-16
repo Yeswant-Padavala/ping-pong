@@ -21,8 +21,14 @@ class GameEngine:
         self.ai_score = 0
         self.font = pygame.font.SysFont("Arial", 30)
 
-        # New: set default winning score
+        # Set default winning score
         self.target_score = 5
+
+        # Sound Effects
+        self.paddle_sound = pygame.mixer.Sound("assets/paddle_hit.wav")
+        self.wall_sound = pygame.mixer.Sound("assets/wall_bounce.wav")
+        self.score_sound = pygame.mixer.Sound("assets/score.wav")
+
 
     def handle_input(self):
         keys = pygame.key.get_pressed()
@@ -33,13 +39,15 @@ class GameEngine:
 
     def update(self):
         self.ball.move()
-        self.ball.check_collision(self.player, self.ai)
+        self.ball.check_collision(self.player, self.ai, self.paddle_sound)
 
         if self.ball.x <= 0:
             self.ai_score += 1
+            self.score_sound.play()
             self.ball.reset()
         elif self.ball.x >= self.width:
             self.player_score += 1
+            self.score_sound.play()
             self.ball.reset()
 
         self.ai.auto_track(self.ball, self.height)
