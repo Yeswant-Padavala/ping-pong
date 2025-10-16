@@ -21,6 +21,9 @@ class GameEngine:
         self.ai_score = 0
         self.font = pygame.font.SysFont("Arial", 30)
 
+        # New: set default winning score
+        self.target_score = 5
+
     def handle_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
@@ -41,24 +44,76 @@ class GameEngine:
 
         self.ai.auto_track(self.ball, self.height)
 
+    # def check_game_over(self, screen):
+    #     winner_text = None
+    #     if self.player_score >= 5:
+    #         winner_text = "Player Wins!"
+    #     elif self.ai_score >= 5:
+    #         winner_text = "AI Wins!"
+
+    #     if winner_text:
+    #         # Display winner text
+    #         text_surface = self.font.render(winner_text, True, WHITE)
+    #         text_rect = text_surface.get_rect(center=(self.width // 2, self.height // 2))
+    #         screen.blit(text_surface, text_rect)
+    #         pygame.display.flip()
+
+    #         # Wait a few seconds before closing
+    #         pygame.time.delay(3000)
+    #         pygame.quit()
+    #         exit()
     def check_game_over(self, screen):
         winner_text = None
-        if self.player_score >= 5:
+        if self.player_score >= self.target_score:
             winner_text = "Player Wins!"
-        elif self.ai_score >= 5:
+        elif self.ai_score >= self.target_score:
             winner_text = "AI Wins!"
 
         if winner_text:
             # Display winner text
             text_surface = self.font.render(winner_text, True, WHITE)
-            text_rect = text_surface.get_rect(center=(self.width // 2, self.height // 2))
+            text_rect = text_surface.get_rect(center=(self.width // 2, self.height // 2 - 40))
             screen.blit(text_surface, text_rect)
+
+            # Display replay options
+            options = [
+                "Press 3 for Best of 3",
+                "Press 5 for Best of 5",
+                "Press 7 for Best of 7",
+                "Press ESC to Exit"
+            ]
+            for i, option in enumerate(options):
+                option_text = self.font.render(option, True, WHITE)
+                screen.blit(option_text, (self.width // 2 - 120, self.height // 2 + i * 30))
+
             pygame.display.flip()
 
-            # Wait a few seconds before closing
-            pygame.time.delay(3000)
-            pygame.quit()
-            exit()
+            # Wait for key input
+            waiting = True
+            while waiting:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            pygame.quit()
+                            exit()
+                        elif event.key == pygame.K_3:
+                            self.target_score = 3
+                            waiting = False
+                        elif event.key == pygame.K_5:
+                            self.target_score = 5
+                            waiting = False
+                        elif event.key == pygame.K_7:
+                            self.target_score = 7
+                            waiting = False
+
+            # Reset scores and ball for a new match
+            self.player_score = 0
+            self.ai_score = 0
+            self.ball.reset()
+
     
     def render(self, screen):
         # Draw paddles and ball
